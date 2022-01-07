@@ -4,7 +4,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class PreferencesHelper {
-    private Preferences prefs;
+    private final Preferences prefs;
 
     public PreferencesHelper() {
         prefs = Preferences.userNodeForPackage(this.getClass());

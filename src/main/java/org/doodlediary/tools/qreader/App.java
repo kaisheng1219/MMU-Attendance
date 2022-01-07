@@ -11,7 +11,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws BackingStoreException {
-        Scene scene = new Scene(new MainPage(stage));
+        Scene scene = new Scene(new MainPage());
         stage.setTitle("MMU Attendance");
         stage.setScene(scene);
         stage.sizeToScene();

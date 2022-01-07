@@ -1,6 +1,5 @@
 package org.doodlediary.tools.qreader.screens;
 
-import com.google.zxing.NotFoundException;
 import javafx.concurrent.Worker;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -8,51 +7,25 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.doodlediary.tools.qreader.components.CredentialInputDialog;
 import org.doodlediary.tools.qreader.components.ExceptionDialog;
 import org.doodlediary.tools.qreader.utils.*;
 import org.w3c.dom.Element;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.prefs.BackingStoreException;
 
 public class MainPage extends VBox {
-    private final Stage attachedStage;
     private final WebView webView;
     private final PreferencesHelper preferencesHelper = new PreferencesHelper();
     private String url;
 
-    public MainPage(Stage stage) throws BackingStoreException {
-        this.attachedStage = stage;
-
+    public MainPage() {
         Button btnCapture = new Button("Capture");
         btnCapture.setOnAction(e -> {
-            attachedStage.hide();
-            try {
-                capture();
-            } catch (Exception ex) {
-                new ExceptionDialog(ex).showAndWait();
-            }
-        });
-        btnCapture.setOnAction(e -> {
-            try {
-                BufferedImage screenshot = Screenshoter.takeScreenshot();
-                url = QRReader.readQRCode(screenshot);
-                System.out.println(url);
-                if (url != null && !url.equals("")) {
-                    getWebPage();
-                    SystemHelper.copyToClipboard(url);
-                }
-                attachedStage.show();
-
-            } catch (AWTException | NotFoundException | IOException ex) {
-                new ExceptionDialog(ex).showAndWait();
-            }
+            capture();
         });
 
         Button btnEdit = new Button("Edit");
@@ -91,19 +64,21 @@ public class MainPage extends VBox {
 
         setStyle("-fx-padding: 10");
         getChildren().addAll(hBox, webView);
+
+        capture();
     }
 
     private void capture() {
         try {
-            url = ScreenshotModal.display();
+            BufferedImage screenshot = Screenshoter.takeScreenshot();
+            url = QRReader.readQRCode(screenshot);
             if (url != null && !url.equals("")) {
-                getWebPage();
                 SystemHelper.copyToClipboard(url);
+                getWebPage();
             }
         } catch (Exception e) {
             new ExceptionDialog(e).showAndWait();
         }
-        attachedStage.show();
     }
 
 
@@ -125,7 +100,7 @@ public class MainPage extends VBox {
                 if (element.getAttribute("action").equals("https://mmls2.mmu.edu.my/attendance/login")) {
                     String js = "document.getElementsByName('email')[0].value='" + username + "';"
                             + "document.getElementsByName('password')[0].value='" + password + "';"
-                            + "document.getElementsByTagName(\"form\")[0].submit();";
+                            + "document.getElementsByTagName('form')[0].submit();";
                     webEngine.executeScript(js);
                 }
             }
