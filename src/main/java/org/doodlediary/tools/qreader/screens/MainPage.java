@@ -43,11 +43,7 @@ public class MainPage extends VBox {
 
         Button btnRetry = new Button("Retry");
         btnRetry.setOnAction(e -> {
-            try {
-                getWebPage();
-            } catch (IOException ex) {
-                new ExceptionDialog(ex).showAndWait();
-            }
+            getWebPage();
         });
 
         HBox hBox = new HBox();
@@ -82,7 +78,7 @@ public class MainPage extends VBox {
     }
 
 
-    private void getWebPage() throws IOException {
+    private void getWebPage() {
         // credentials are stored in env
         String username = preferencesHelper.getPref("MMU_SID");
         String password = preferencesHelper.getPref("MMU_PWD");

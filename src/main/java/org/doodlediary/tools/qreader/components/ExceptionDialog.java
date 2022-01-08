@@ -1,10 +1,12 @@
 package org.doodlediary.tools.qreader.components;
 
+import com.google.zxing.NotFoundException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -13,13 +15,18 @@ public class ExceptionDialog extends Alert {
         super(AlertType.ERROR);
         setTitle("Exception Dialog");
 
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        String exceptionString = sw.toString();
+        String exceptionString = "";
 
-        Label label = new Label("The exception stacktrace was:");
+        if (e instanceof NotFoundException)
+            exceptionString = "No QR Code Found! Please ensure that the QR Code is clearly visible.";
+        else {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            exceptionString = sw.toString();
+        }
 
+        Label label = new Label("The exception cause was:");
         TextArea textArea = new TextArea(exceptionString);
         textArea.setEditable(false);
         textArea.setWrapText(true);
